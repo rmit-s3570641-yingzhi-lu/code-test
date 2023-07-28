@@ -16,8 +16,6 @@ interface LoginResponse {
   accessToken: string;
 }
 
-const genericLoginErrorMessage = "Invalid username or password";
-
 export async function POST(request: Request) {
   const body: LoginRequest = await request.json();
 
@@ -29,33 +27,26 @@ export async function POST(request: Request) {
 
   if(!user){
     // User Not Found, as user not found 
-    return new Response(JSON.stringify({ message: genericLoginErrorMessage }), { status: 400 });
+    return new Response(JSON.stringify({ message: "Username doesn't exists." }), { status: 400 });
   }
 
   if (user) {
     const currentAttemptTime = new Date();
     var currentLoginAttempts = user.loginAttempts;
 
+    const retryIntervalInSeconds = 5*60;
+    const diffSeconds = moment(currentAttemptTime).diff(moment(user.attemptAt), "seconds");
+
     // If user is locked and 5 minutes have passed since last attempt, unlock user
     if(user.userLocked){
-      if(user.attemptAt && (moment(currentAttemptTime).diff(moment(user.attemptAt), "seconds") > 5*60)){
+      if(user.attemptAt && diffSeconds > retryIntervalInSeconds){
         console.log("Resetting user's login attempts and unlocking user after 5 minutes");
         currentLoginAttempts = 0;
-        await prisma.user.update({
-          where: {
-            id: user.id
-          }, 
-          data: {
-            attemptAt: null,
-            modifiedAt: new Date(),
-            loginAttempts: currentLoginAttempts,
-            userLocked: false
-          }
-        });
+        await resetAttempts(user.id, null, currentLoginAttempts, false);
       }else{
         return new Response(JSON.stringify(
           { 
-            message: "User is locked. Please wait for 5 minutes before try again." 
+            message: "User is locked. Please try again after " + (retryIntervalInSeconds-diffSeconds) + " second(s)."
           }), 
           { 
             status: 423 
@@ -66,20 +57,20 @@ export async function POST(request: Request) {
     const isPasswordMatch = await bcrypt.compare(body.password, user.password);
     if (!isPasswordMatch) {
       // If user is not locked but failed, increment login attempts, lock user if 3 attempts have been made
-      await prisma.user.update({
-        where: {
-          id: user.id
-        }
-        , data: {
-          attemptAt: currentAttemptTime,
-          modifiedAt: new Date(),
-          loginAttempts: currentLoginAttempts + 1,
-          userLocked: currentLoginAttempts + 1 >= 3 ? true : false
-        }
-      });
-      return new Response(JSON.stringify({ message: genericLoginErrorMessage }), { status: 400 });
+      const newLoginAttempt = currentLoginAttempts + 1;
+      const totalAllowedAttempts = 3;
+      await resetAttempts(user.id, currentAttemptTime, newLoginAttempt, newLoginAttempt >= totalAllowedAttempts);
+
+      const error = (totalAllowedAttempts - newLoginAttempt) === 0 
+            ? "User is locked. Please try again after " + (retryIntervalInSeconds-diffSeconds) + " second(s)."
+            : "Invalid Password! " + (totalAllowedAttempts - newLoginAttempt) + " attempt(s) left.";
+            
+      return new Response(JSON.stringify({ message: error}), { status: 400 });
     }
   }
+
+  // If user is found and password matches, reset login attempts
+  await resetAttempts(user.id, null, 0, false);
 
   // Sign the JWT token without password and return to client
   const { password, ...userWithoutPass } = user;
@@ -92,4 +83,18 @@ export async function POST(request: Request) {
   };
 
   return new Response(JSON.stringify(result), { status: 200 });
+}
+
+async function resetAttempts(id : string, attemptAt : Date | null, loginAttempts : number, userLocked : boolean) {
+  await prisma.user.update({
+    where: {
+      id: id
+    },
+    data: {
+      attemptAt: attemptAt,
+      modifiedAt: new Date(),
+      loginAttempts: loginAttempts,
+      userLocked: userLocked
+    }
+  });
 }

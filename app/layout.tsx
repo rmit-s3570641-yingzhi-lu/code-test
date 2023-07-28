@@ -1,6 +1,5 @@
 import NavBar from "@/components/NavBar"
 import Providers from "@/components/Providers";
-import JwtTokenDisplay from "@/components/JwtTokenDisplay";
 
 import "./globals.css";
 
@@ -15,7 +14,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Providers>
           <NavBar />
-          <JwtTokenDisplay />
           {children}
         </Providers>
       </body>

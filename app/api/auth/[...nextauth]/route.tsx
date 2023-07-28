@@ -2,6 +2,12 @@ import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const handler = NextAuth({
+  pages: {
+    signIn: '/login'
+  },
+  session: {
+    strategy: 'jwt'
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -19,12 +25,13 @@ const handler = NextAuth({
           }),
         });
 
-        const user = await res.json();
+        const response = await res.json();
+        console.log(response);
 
-        if (res.ok && user) {
-          return user;
+        if (res.ok && response) {
+          return response;
         }else{
-          return null;
+          throw new Error(response.message);
         }
       }
     })

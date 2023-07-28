@@ -16,7 +16,7 @@ const JwtTokenDisplay = () => {
         );
       }
       return (
-        <div>
+        <div className="grid grid-cols-1 divide-y break-words p-10" >
             <p>No Session found</p>
         </div>
       );
