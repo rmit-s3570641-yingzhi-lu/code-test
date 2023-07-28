@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import SigninButton from "./LoginButton";
+import LoginButton from "./LoginButton";
 
 const AppBar = () => {
   return (
@@ -8,7 +8,7 @@ const AppBar = () => {
       <Link className="transition-colors hover:text-blue-500" href={"/"}>
         Home Page
       </Link>
-      <SigninButton />
+      <LoginButton />
     </header>
   );
 };
