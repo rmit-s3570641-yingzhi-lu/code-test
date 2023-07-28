@@ -7,11 +7,11 @@ const JwtTokenDisplay = () => {
     const { data: session } = useSession();
     if (session && session.user) {
         return (
-          <div>
-            <p>Email: {session.user.email} </p>
-            <p>FirstName: {session.user.firstname} </p>
-            <p>LastName: {session.user.lastname} </p>
-            <p>Access Token: {session.user.accessToken} </p>
+          <div className="grid grid-cols-1 divide-y break-words p-10">
+            <div className="grid grid-cols-2"><div className="font-bold">Email:</div> <div>{session.user.email} </div> </div>
+            <div className="grid grid-cols-2"><div className="font-bold">FirstName:</div> <div>{session.user.firstname} </div> </div>
+            <div className="grid grid-cols-2"><div className="font-bold">LastName:</div> <div>{session.user.lastname} </div> </div>
+            <div className="grid grid-cols-2"><div className="font-bold">Access Token:</div> <div>{session.user.accessToken} </div> </div>
           </div>
         );
       }

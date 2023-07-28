@@ -6,18 +6,15 @@ const SigninButton = () => {
   const { data: session } = useSession();
   if (session && session.user) {
     return (
-      <div className="flex gap-4 ml-auto">
-        <p className="text-sky-600">{session.user.firstname} {session.user.lastname}</p>
-        <button onClick={() => signOut()} className="text-red-600">
-          Sign Out
-        </button>
-      </div>
+      <a onClick={() => signOut()} className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-black font-bold items-center justify-center hover:bg-gray-600 hover:text-white">
+        Sign Out
+      </a>
     );
   }
   return (
-    <button onClick={() => signIn()} className="text-green-600 ml-auto">
+    <a onClick={() => signIn()} className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-black font-bold items-center justify-center hover:bg-gray-600 hover:text-white">
       Sign In
-    </button>
+    </a>
   );
 };
 
