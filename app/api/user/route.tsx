@@ -2,7 +2,12 @@ import prisma from "@/utils/database";
 import { verifyJwt } from "@/utils/jwt"
 import * as bcrypt from "bcrypt";
 
-import { CreateUserRequest } from "@/models/CreateUserRequest";
+interface CreateUserRequest {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
 
 // Create User in Database
 export async function POST(request: Request) {
@@ -48,8 +53,12 @@ export async function GET(request: Request) {
   
     // Validate JWT token
     const accessToken = request.headers.get("authorization");
+    if(accessToken === null) {
+      return new Response(JSON.stringify({error: "unauthorized",}),{status: 401});
+    }
+    
     const decodedToken = verifyJwt(accessToken);
-    if (!accessToken || !decodedToken) {
+    if (decodedToken === null) {
       return new Response(JSON.stringify({error: "unauthorized",}),{status: 401});
     }
 
