@@ -8,7 +8,7 @@ import { useState } from 'react'
 export default function Login() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const callbackUrl = searchParams.get('callbackUrl') || '/jwt'
+    const callbackUrl = searchParams.get('callbackUrl') || '/'
     const [username, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -22,9 +22,7 @@ export default function Login() {
         password,
         callbackUrl
       })
-      console.log('Res', res)
       if (!res?.error) {
-        console.log(callbackUrl)
         router.push(callbackUrl)
       } else {
         setError(res?.error ?? "Error signing in. Please try again.")
