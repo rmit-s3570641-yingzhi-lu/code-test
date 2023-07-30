@@ -31,7 +31,7 @@ pnpm dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 Here is a gif shows how the website works<br>
-![Alt text](image.png)
+![Alt text](demo.gif)
 
 ## Run with Docker
 ```bash
