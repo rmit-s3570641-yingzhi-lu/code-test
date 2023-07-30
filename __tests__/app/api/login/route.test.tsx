@@ -86,7 +86,6 @@ describe("LoginAPI", () => {
     // Act
     const response = await POST(mockReqest);
     const json = await response.json();
-    console.log(json)
 
     // Assert
     expect(response.status).toEqual(200);
