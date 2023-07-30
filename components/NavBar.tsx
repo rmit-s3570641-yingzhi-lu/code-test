@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import LoginButton from "./LoginButton";
 
 const AppBar = () => {
   const [active, setActive] = useState(false);
@@ -64,7 +63,9 @@ const AppBar = () => {
             <Link href='/'className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-black font-bold items-center justify-center hover:bg-gray-600 hover:text-white'>
                 Contact us
             </Link>
-            <LoginButton />
+            <Link href='/login'className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-black font-bold items-center justify-center hover:bg-gray-600 hover:text-white'>
+                Sign In
+            </Link>
           </div>
         </div>
       </nav>

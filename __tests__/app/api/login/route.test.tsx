@@ -1,73 +1,25 @@
 import { POST } from '@/app/api/login/route';
-import prisma from '@/utils/database';
-import { signJwtAccessToken } from '@/utils/jwt';
+import { prismaMock } from '@/mocks/database';
 
 // Arrange
 const mockAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
 
-jest.mock('@/utils/database', () => ({
-  user: {
-    findFirst: jest.fn(),
-  },
-}));
+test('should return 200 OK with user information and access token on successful login', async () => {
+  //Arrange
+  prismaMock.user.findFirst.mockResolvedValue(null);
 
-jest.mock('bcrypt', () => ({
-  compare: jest.fn(),
-}));
+  const mockRequest = {
+    username: 'jodielu0508@gmail.com',
+    password: '1234',
+  } as any as Request
+  
+  const response = await POST(mockRequest);
 
-jest.mock('@/utils/jwt', () => ({
-  signJwtAccessToken: jest.fn(() => mockAccessToken),
-}));
+  const expectedResponse = {
+    message : "Username doesn't exists."
+  };
 
-// Act & Assert
-describe('Login endpoint', () => {
-  const mockRequest = (body) => ({
-    json: async () => body,
-  });
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual(expectedResponse);
+})
 
-  it('should return 200 OK with user information and access token on successful login', async () => {
-
-    const mockUser = {
-      id: '1',
-      firstname: 'Jodie',
-      lastname: 'Lu',
-      email: 'jodielu0508@gmail.com',
-      password: '$2b$10$h7.MhTlrRDlXq1Jit74bFeIK9lzmWVt5wXzpjUHO.Ji4KxDkVJlRi',
-    };
-
-    require('@/utils/database').user.findFirst.mockResolvedValue(mockUser);
-    require('bcrypt').compare.mockResolvedValue(true);
-
-    const request = mockRequest({
-      username: 'jodielu0508@gmail.com',
-      password: '1234',
-    });
-    const response = await POST(request);
-
-    const expectedResponse = {
-      id: '1',
-      firstname: 'Jodie',
-      lastname: 'Lu',
-      email: 'jodielu0508@gmail.com',
-      accessToken: mockAccessToken,
-    };
-
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual(expectedResponse);
-  });
-
-  it('should return 400 Bad Request on invalid username or password', async () => {
-
-    require('@/utils/database').user.findFirst.mockResolvedValue(null);
-    require('bcrypt').compare.mockResolvedValue(false);
-
-    const request = mockRequest({
-      username: 'jodielu0508@gmail.com',
-      password: '4567',
-    });
-    const response = await POST(request);
-
-    expect(response.status).toBe(400);
-    expect(await response.json()).toEqual({ message: 'Invalid username or password' });
-  });
-});

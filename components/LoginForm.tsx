@@ -1,35 +1,42 @@
 'use client';
 
-import { Alert } from "@/components/Alert";
-import { signIn } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 export default function Login() {
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    const callbackUrl = searchParams.get('callbackUrl') || '/'
     const [username, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
+    const [token, setToken] = useState('')
 
     const isDisabled = () => !username || !password;
 
     const onSubmit = async (e: React.FormEvent) => {
+        setError('');
+        setSuccess('');
+        setToken('');
+
         e.preventDefault()
-        try {
-            const res = await signIn('credentials', {
-                redirect: false,
+
+        fetch('/api/login', {
+            method: 'POST',
+            body: JSON.stringify({
                 username,
                 password,
-                callbackUrl
+            }),
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                if(res?.message){
+                    setError(res.message);
+                }else{
+                    setToken(res?.accessToken);
+                    setSuccess('Success Logging In');
+                }
             })
-            if (!res?.error) {
-                router.push(callbackUrl)
-            } else {
-                setError(res?.error ?? "Error signing in. Please try again.")
-            }
-        } catch (err: any) { }
+            .catch((err) => {
+                setError(err ?? 'Error Logging In');
+            });
     }
 
     return (
@@ -45,6 +52,7 @@ export default function Login() {
                             Username
                         </label>
                         <input
+                            id="username"
                             value={username}
                             onChange={(e: any) => setUserName(e.target.value)}
                             type="email"
@@ -60,6 +68,7 @@ export default function Login() {
                             Password
                         </label>
                         <input
+                            id="password"
                             value={password}
                             onChange={(e: any) => setPassword(e.target.value)}
                             type="password"
@@ -68,15 +77,18 @@ export default function Login() {
                         />
                     </div>
 
-                    {error && <Alert>{error}</Alert>}
-
                     <div className="mt-8">
                         <button
+                            onClick={onSubmit}
                             disabled={isDisabled()}
                             className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600 disabled:opacity-50">
                             Login
                         </button>
                     </div>
+
+                    {error && <div className="p-2 mt-5 rounded bg-red-200">{error}</div>}
+                    {success && <div className="p-2 mt-5 rounded bg-green-200">{success}</div>}
+                    {token && <div className="p-2 mt-5 rounded bg-gray-200 break-words"><p className='font-semibold'>AccessToken:</p>{token}</div>}
                 </form>
 
             </div>
