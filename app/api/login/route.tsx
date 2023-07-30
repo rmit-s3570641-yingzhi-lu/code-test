@@ -44,13 +44,9 @@ export async function POST(request: Request) {
         currentLoginAttempts = 0;
         await resetAttempts(user.id, null, currentLoginAttempts, false);
       }else{
-        return new Response(JSON.stringify(
-          { 
-            message: "User is locked. Please try again after " + (retryIntervalInSeconds-diffSeconds) + " second(s)."
-          }), 
-          { 
-            status: 423 
-          });
+
+        const error = "User is locked. Please try again after " + (retryIntervalInSeconds-diffSeconds) + " second(s)."
+        return new Response(JSON.stringify({ message: error}), { status: 423 });
       }
     }
 
@@ -61,11 +57,12 @@ export async function POST(request: Request) {
       const totalAllowedAttempts = 3;
       await resetAttempts(user.id, currentAttemptTime, newLoginAttempt, newLoginAttempt >= totalAllowedAttempts);
 
-      const error = (totalAllowedAttempts - newLoginAttempt) === 0 
+      const toLockUser = (totalAllowedAttempts - newLoginAttempt) === 0 
+      const error = toLockUser
             ? "User is locked. Please try again after " + (retryIntervalInSeconds-diffSeconds) + " second(s)."
             : "Invalid Password! " + (totalAllowedAttempts - newLoginAttempt) + " attempt(s) left.";
             
-      return new Response(JSON.stringify({ message: error}), { status: 400 });
+      return new Response(JSON.stringify({ message: error}), { status: toLockUser ? 423 : 400 });
     }
   }
 
@@ -73,15 +70,13 @@ export async function POST(request: Request) {
   await resetAttempts(user.id, null, 0, false);
 
   // Sign the JWT token without password and return to client
-  const { password, ...userWithoutPass } = user;
-  const result: LoginResponse = {
+  const userDetails = {
     id: user.id,
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
-    accessToken: signJwtAccessToken(userWithoutPass),
   };
-
+  const result = {...userDetails, accessToken: signJwtAccessToken(userDetails)};
   return new Response(JSON.stringify(result), { status: 200 });
 }
 
