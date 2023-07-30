@@ -38,7 +38,11 @@ describe("LoginAPI", () => {
       lastname: 'Lu',
       email: 'jodielu0508@gmail.com',
       password: 'secure-password',
-      userLocked: false
+      userLocked: false,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+      loginAttempts: 0,
+      attemptAt: null
     };
 
     prismaMock.user.findFirst.mockResolvedValue(mockUser);
@@ -61,7 +65,11 @@ describe("LoginAPI", () => {
       lastname: 'Lu',
       email: 'jodielu0508@gmail.com',
       password: '$2b$10$iRcAvsnene1l4VNXXnQLXeiviWV.czqJbbxCHEHNu4LHuOH0JCqSa',
-      userLocked: false
+      userLocked: false,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+      loginAttempts: 0,
+      attemptAt: null
     };
 
     prismaMock.user.findFirst.mockResolvedValue(mockUser);
@@ -99,7 +107,9 @@ describe("LoginAPI", () => {
       password: '$2b$10$iRcAvsnene1l4VNXXnQLXeiviWV.czqJbbxCHEHNu4LHuOH0JCqSa',
       loginAttempts: 3,
       userLocked: true,
-      attemptAt: new Date(Date.now() - 5000) // assume tried 5 seconds ago
+      attemptAt: new Date(Date.now() - 5000), // assume tried 5 seconds ago
+      createdAt: new Date(),
+      modifiedAt: new Date(),
     };
 
     prismaMock.user.findFirst.mockResolvedValue(mockUser);
@@ -124,7 +134,9 @@ describe("LoginAPI", () => {
       password: '$2b$10$iRcAvsnene1l4VNXXnQLXeiviWV.czqJbbxCHEHNu4LHuOH0JCqSa',
       loginAttempts: 2, // Has tried twice
       userLocked: false,
-      attemptAt: new Date(Date.now() - 5000) // assume tried 5 seconds ago
+      attemptAt: new Date(Date.now() - 5000), // assume tried 5 seconds ago
+      createdAt: new Date(),
+      modifiedAt: new Date(),
     };
 
     prismaMock.user.findFirst.mockResolvedValue(mockUser);
@@ -149,7 +161,9 @@ describe("LoginAPI", () => {
       password: '$2b$10$iRcAvsnene1l4VNXXnQLXeiviWV.czqJbbxCHEHNu4LHuOH0JCqSa',
       loginAttempts: 3,
       userLocked: true, // user is locked
-      attemptAt: new Date(Date.now() - 6 * 60 * 1000) // assume tried 6 minutes ago, should login success this time
+      attemptAt: new Date(Date.now() - 6 * 60 * 1000), // assume tried 6 minutes ago, should login success this time
+      createdAt: new Date(),
+      modifiedAt: new Date(),
     };
 
     prismaMock.user.findFirst.mockResolvedValue(mockUser);
