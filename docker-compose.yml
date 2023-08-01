@@ -2,32 +2,33 @@ version: '3.9'
 
 services:
   code-test:
-    container_name: code-test
     build:
       context: ./
-      dockerfile: prod.Dockerfile
-
+      dockerfile: Dockerfile
     environment:
       ENV_VARIABLE: ${ENV_VARIABLE}
       DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY: ${SECRET_KEY}
-
+    env_file:
+      - .env
+    volumes:
+      - .:/app
     restart: always
     ports:
       - 3000:3000
-    networks:
-      - my_network
+    depends_on:
+      - mongo
 
   mongo:
     image: mongo
-    container_name: mongodb
     restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: 1234
     ports:
       - 27017:27017
 
-networks:
-  my_network:
-    external: true
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
