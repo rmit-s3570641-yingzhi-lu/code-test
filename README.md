@@ -35,14 +35,37 @@ Here is a gif shows how the website works<br>
 
 ## Run with Docker
 ```bash
-docker-compose up
+# Build the database and app images
+docker-compose up -d
+
+# Go to the app container terminal to generate the prisma client
+npx prisma db push
+
+# Make an API call to register a user
+curl --location 'http://localhost:3000/api/user' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "firstname": "Jodie",
+    "lastname": "Lu",
+    "email": "test@gmail.com",
+    "password": "1234"
+}'
+
+# Go to the db container terminal to inspect the newly created user
+mongosh
+use codetest
+db.Users.find()
+
+# Navigate to http://localhost:3000/login to login with the registered user
+
+# cleanup the docker resource after finish testing
+docker compose down -v --rmi all --remove-orphans
 ```
 
 ## To DOs
-1. All docker related configuration has not be tested throughly
-2. Integration Test is not working properly, still needs further troubleshooting about the database connection in docker container
-3. Implement logging machanism
-4. Implement a better error handling machanism
-5. Implement API middleware to validate the JWT token for all the protected endpoints
-6. Implement API middleware to handle the rate limiting to stop brute force attack
-7. Deploy to cloud using Google/Azure/Vercel
+1. Integration Test is not working properly, still needs further troubleshooting about the database connection in docker container
+1. Implement logging machanism
+1. Implement a better error handling machanism
+1. Implement API middleware to validate the JWT token for all the protected endpoints
+1. Implement API middleware to handle the rate limiting to stop brute force attack
+1. Deploy to cloud using Google/Azure/Vercel
