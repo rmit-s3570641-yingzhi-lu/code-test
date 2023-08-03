@@ -1,4 +1,5 @@
-## Overview
+# Overview
+
 This is a project with latest Nextjs app router and serverless api. It is a simple website that allows user to login and register.
 
 Only login functionality is implemented with UI, the register functionality is implemented with API.
@@ -10,6 +11,7 @@ Project is using MongoDB as the database. The database can be hosted on MongoDB 
 Implemented with a databse based user locking machanism. If a user tries to login with wrong password 3 times, the user will be locked for maximum 5 minutes.
 
 ## Tech Stack
+
 1. Framework: NextJs, Typescript, TailwindCSS
 1. Database: MongoDB, Prisma
 1. Build & Release: Docker, Docker Compose
@@ -17,11 +19,13 @@ Implemented with a databse based user locking machanism. If a user tries to logi
 1. Coding Standard: ESLint, Husky, Lint Staged, Commitlint
 
 ## Configuration
-At .env file <br>
-```DATABASE_URL``` : Mongodb connection URL <br>
+
+At .env file \
+```DATABASE_URL``` : Mongodb connection URL e.g. mongodb://mongo:27017/codetest (with docker) \
 ```SECRET_KEY``` : A long string to encrypt/decrypt the JWT token
 
 ## Getting Started
+
 First, run the development server:
 
 ```bash
@@ -34,10 +38,11 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Here is a gif shows how the website works<br>
+Here is a gif shows how the website works\
 ![Alt text](demo.gif)
 
 ## Run with Docker
+
 ```bash
 # Build the database and app images
 docker-compose up -d
@@ -67,6 +72,8 @@ docker compose down -v --rmi all --remove-orphans
 ```
 
 ## To DOs
+
+1. Separate the integration test into it's dedicated docker container to avoid affecting main app container
 1. Implement logging machanism
 1. Implement a better error handling machanism
 1. Implement API middleware to validate the JWT token for all the protected endpoints
