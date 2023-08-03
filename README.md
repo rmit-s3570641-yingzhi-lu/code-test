@@ -10,7 +10,11 @@ Project is using MongoDB as the database. The database can be hosted on MongoDB 
 Implemented with a databse based user locking machanism. If a user tries to login with wrong password 3 times, the user will be locked for maximum 5 minutes.
 
 ## Tech Stack
-NextJs, MongoDB, Docker, Docker Compose, Typescript, TailwindCSS, Jest, React Testing Library, Prisma
+1. Framework: NextJs, Typescript, TailwindCSS
+1. Database: MongoDB, Prisma
+1. Build & Release: Docker, Docker Compose
+1. Testing: Jest, React Testing Library
+1. Coding Standard: ESLint, Husky, Lint Staged, Commitlint
 
 ## Configuration
 At .env file <br>
@@ -63,7 +67,7 @@ docker compose down -v --rmi all --remove-orphans
 ```
 
 ## To DOs
-1. Integration Test is not working properly, still needs further troubleshooting about the database connection in docker container
+1. Integration Test is not working properly, need to fix
 1. Implement logging machanism
 1. Implement a better error handling machanism
 1. Implement API middleware to validate the JWT token for all the protected endpoints
