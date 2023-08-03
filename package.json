@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
     "prepare": "husky install",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "test": "jest -c jest.config.integration.mjs && jest -c jest.config.unit.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",

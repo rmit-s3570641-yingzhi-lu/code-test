@@ -67,7 +67,6 @@ docker compose down -v --rmi all --remove-orphans
 ```
 
 ## To DOs
-1. Integration Test is not working properly, need to fix
 1. Implement logging machanism
 1. Implement a better error handling machanism
 1. Implement API middleware to validate the JWT token for all the protected endpoints

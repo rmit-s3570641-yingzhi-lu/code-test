@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import LoginForm from "../../components/LoginForm";
-import { server } from '../../mocks/server';
+import LoginForm from "../../../components/LoginForm";
+import { server } from '../../../mocks/server';
 import { rest } from 'msw';
 
 describe("LoginForm", () => {
